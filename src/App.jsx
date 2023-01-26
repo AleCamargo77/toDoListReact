@@ -11,10 +11,47 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      const res = await fetch(`${API}/todos`)
+        .then((res) => res.json())
+        .then((data) => data)
+        .catch((err) => console.log(err));
+
+      setLoading(false);
+      setTodos(res);
+    };
+
+    loadData();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("enviou");
+
+    const todo = {
+      id: Math.random(),
+      title,
+      time,
+      done: false,
+    };
+
+    await fetch(`${API}/todos`, {
+      method: "POST",
+      body: JSON.stringify(todo),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    setTodos((prevState) => [...prevState, todo]);
+    setTitle("");
+    setTime("");
   };
+
+  if (loading) {
+    return <p>Carregando...</p>;
+  }
   return (
     <div className="App">
       <div className="todo-title">
@@ -23,12 +60,47 @@ function App() {
       <div className="todo-form">
         <h2>Insira a sua próxima tarefa:</h2>
         <form onSubmit={handleSubmit}>
-          <button>Enviar</button>
+          <div className="form-control">
+            <label htmlFor="title">O que você vai fazer?</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Título de tarefa"
+              onChange={(e) => setTitle(e.target.value)}
+              value={title || ""}
+              required
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="time">Duração:</label>
+            <input
+              type="text"
+              name="time"
+              placeholder="Tempo estimado (em horas)"
+              onChange={(e) => setTime(e.target.value)}
+              value={time || ""}
+              required
+            />
+          </div>
+
+          <input type="submit" value="Criar Tarefa" />
         </form>
       </div>
       <div className="todo-list">
         <h2>Lista de tarefas</h2>
-        {todos.length === 0 && <p>Não há tarefas:</p>}
+        {todos.length === 0 && <p>Não há tarefas!!!</p>}
+        {todos.map((todo) => (
+          <div className="todo" key={todo.id}>
+            <h3 className={todo.done ? "todo-done" : ""}>{todo.tile}</h3>
+            <p>Duração: {todo.time}</p>
+            <div className="actions">
+              <span>
+                {!todo.done ? <BsBookmarkCheck /> : <BsBookmarkChefill />}
+              </span>
+              <BsTrash />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
