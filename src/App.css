@@ -82,3 +82,21 @@ input[type="submit"] {
   text-decoration: line-through;
   color: rgb(240, 98, 146);
 }
+
+.todo p {
+  text-align: left;
+  font-style: italic;
+  font-size: 0.7em;
+  margin-bottom: 1.5em;
+}
+
+.todo svg {
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-right: 1em;
+  transition: 0.5s;
+}
+
+.todo svg:hover {
+  color: rgb(240, 98, 146);
+}
